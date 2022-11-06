@@ -34,7 +34,10 @@ export default function AuthProvider({ children }) {
                 setUser(currentUser);
                 setLoading(false);
             }
+
         })
+
+        return () => unsubscribe();
     }, [])
 
     const authInfo = { user, loading, createUser, loginWithEmail, logOut, providerSignIn };

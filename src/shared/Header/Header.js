@@ -1,7 +1,10 @@
 import { Avatar, Dropdown, Navbar } from 'flowbite-react'
-import React from 'react'
+import React, { useContext } from 'react'
+import { NavLink } from 'react-router-dom'
+import { AuthContext } from '../../contexts/authProvider/AuthProvider'
 
 export default function Header() {
+    const { user, logOut } = useContext(AuthContext);
     return (
         <Navbar
             fluid={true}
@@ -48,24 +51,30 @@ export default function Header() {
                 <Navbar.Toggle />
             </div>
             <Navbar.Collapse>
-                <Navbar.Link
-                    href="/navbars"
-                    active={true}
+                <NavLink
+                    to="/"
                 >
                     Home
-                </Navbar.Link>
-                <Navbar.Link href="/navbars">
+                </NavLink>
+                <NavLink to="/">
                     About
-                </Navbar.Link>
-                <Navbar.Link href="/navbars">
+                </NavLink>
+                <NavLink to="/services">
                     Services
-                </Navbar.Link>
-                <Navbar.Link href="/navbars">
+                </NavLink>
+                <NavLink to="/">
                     Pricing
-                </Navbar.Link>
-                <Navbar.Link href="/navbars">
-                    Contact
-                </Navbar.Link>
+                </NavLink>
+                {
+                    !user?.email ?
+                        <NavLink to="/login">
+                            Login
+                        </NavLink>
+                        :
+                        <NavLink onClick={() => logOut()}>
+                            Logout
+                        </NavLink>
+                }
             </Navbar.Collapse>
         </Navbar>
     )

@@ -1,14 +1,41 @@
 import { Button, Checkbox, Label, Modal, TextInput, on } from 'flowbite-react'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form';
+import { AuthContext } from '../../contexts/authProvider/AuthProvider';
 
 export default function PostForm() {
+    const { user, loading } = useContext(AuthContext);
     const [visible, setVisible] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const onSubmit = (data) => {
-        console.log(data)
+        console.log(data);
+        const date = new Date();
+        const time = date.getMilliseconds();
+        const postData = {
+            ...data,
+            email: user.email,
+            displayName: user.displayName,
+            profileImg: user.photoURL,
+            createdAt: time
+        }
 
+        fetch('http://localhost:5000/post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.acknowledged) {
+                    alert('Post created succesfully');
+                    setVisible(false);
+                }
+            })
+            .catch(err => console.log(err))
     }
 
     return (

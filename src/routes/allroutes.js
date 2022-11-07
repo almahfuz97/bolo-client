@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
+import Comments from "../pages/Comments/Comments";
 import Home from "../pages/Home/Home";
 import Login from "../pages/login/Login";
 import Services from "../pages/services/Services";
@@ -22,6 +23,11 @@ export const router = createBrowserRouter([
             {
                 path: '/services',
                 element: <JwtVerify><Services /></JwtVerify>
+            },
+            {
+                path: '/comments/:id',
+                element: <Comments />,
+                loader: ({ params }) => fetch(`http://localhost:5000/comments/${params.id}`)
             },
         ]
     }

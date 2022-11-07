@@ -11,13 +11,16 @@ export default function PostForm() {
     const onSubmit = (data) => {
         console.log(data);
         const date = new Date();
+        const date2 = Date.now();
+
+        console.log(date2);
         const time = date.getMilliseconds();
         const postData = {
             ...data,
             email: user.email,
             displayName: user.displayName,
             profileImg: user.photoURL,
-            createdAt: time
+            createdAt: Date.now(),
         }
 
         fetch('http://localhost:5000/post', {

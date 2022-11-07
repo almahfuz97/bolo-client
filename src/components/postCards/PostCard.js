@@ -1,26 +1,40 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import pfp from '../../assets/man.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faThumbsUp, faComment } from '@fortawesome/free-solid-svg-icons'
 import { AuthContext } from '../../contexts/authProvider/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Modal } from 'flowbite-react';
+import { io } from 'socket.io-client';
+
+const socket = io.connect('http://localhost:5000');
 
 export default function PostCard({ post }) {
-    const { createdAt, email, profileImg, imageUrl, title, postContent, displayName, _id, likes } = post;
+
+    const { createdAt, email, profileImg, imageUrl, title, postContent, displayName, _id, likes, likedby } = post;
     const { user, loading } = useContext(AuthContext);
     const [likeToggle, setLikeToggle] = useState(false);
     const [totalLikes, setTotalLikes] = useState(likes)
     const [visible, setVisible] = useState(false);
 
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (likedby[user?.email]) setLikeToggle(true)
+        else setLikeToggle(false)
+    }, [user])
+
     const handleLike = (id) => {
         if (!user?.email) {
             setVisible(true);
-
         } else {
+
+            console.log(likeToggle)
+            socket.emit('like', { id: _id });
 
             setLikeToggle(!likeToggle);
             console.log(likeToggle)
+
             fetch('http://localhost:5000/likes', {
                 method: 'PUT',
                 headers: {
@@ -29,7 +43,7 @@ export default function PostCard({ post }) {
                 body: JSON.stringify({
                     id: _id,
                     email: user.email,
-                    isLiked: likeToggle
+                    isLiked: !likeToggle
                 })
             })
                 .then(res => res.json())
@@ -48,7 +62,12 @@ export default function PostCard({ post }) {
         }
     }
     const handleComment = (id) => {
-
+        if (!user?.email) {
+            setVisible(true);
+        }
+        else {
+            navigate(`/comments/${id}`)
+        }
     }
     return (
         <div className='border rounded mb-8'>
@@ -64,19 +83,19 @@ export default function PostCard({ post }) {
                 </div>
             </div>
             <div>
-                <div className='px-4'>
-                    <h2 className=' font-bold text-2xl'>{title}</h2>
+                <div className='px-4 '>
+                    <h2 className=' font-bold text-xl mb-2'>{title}</h2>
                     <p> {postContent}</p>
                 </div>
                 <img src={imageUrl} alt="" className='f w-full mt-4' />
             </div>
             <div className=' border-t-2 px-4 py-2 flex items-center space-x-4' >
-                <div className=' flex items-center space-x-2'>
-                    <FontAwesomeIcon onClick={() => handleLike(_id)} size='lg' className={` cursor-pointer`} icon={faThumbsUp} />
+                <div onClick={() => handleLike(_id)} className=' flex items-center space-x-2 hover:bg-slate-200 px-4 py-1 cursor-pointer'>
+                    <FontAwesomeIcon size='lg' className={` cursor-pointer ${likeToggle && ' text-blue-600'} `} icon={faThumbsUp} />
                     <p>{totalLikes}</p>
                 </div>
-                <div className=' flex items-center space-x-2'>
-                    <FontAwesomeIcon onClick={() => handleComment(_id)} size='lg' icon={faComment} className={`cursor-pointer`} />
+                <div onClick={() => handleComment(_id)} className=' flex items-center space-x-2 hover:bg-slate-200 px-2 py-1 cursor-pointer'>
+                    <FontAwesomeIcon size='lg' icon={faComment} className={`cursor-pointer`} />
                     <p>100</p>
                 </div>
             </div>

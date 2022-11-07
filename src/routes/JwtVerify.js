@@ -10,7 +10,7 @@ export default function JwtVerify({ children }) {
 
     useEffect(() => {
 
-        fetch(`http://localhost:5000/services?email=${user?.email}`, {
+        fetch(`https://bolo-server.vercel.app/services?email=${user?.email}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

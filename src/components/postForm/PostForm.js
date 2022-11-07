@@ -2,6 +2,8 @@ import { Button, Checkbox, Label, Modal, TextInput, on } from 'flowbite-react'
 import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../contexts/authProvider/AuthProvider';
+import pfp from '../../assets/man.png'
+
 
 export default function PostForm() {
     const { user, loading } = useContext(AuthContext);
@@ -23,7 +25,7 @@ export default function PostForm() {
             createdAt: Date.now(),
         }
 
-        fetch('http://localhost:5000/post', {
+        fetch('https://bolo-server.vercel.app/post', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -41,10 +43,15 @@ export default function PostForm() {
             .catch(err => console.log(err))
     }
 
+    loading && <div>Loading....</div>
     return (
         <div className='border py-8 px-4 rounded mb-12'>
             <div className='flex'>
-                <img src="https://i.ibb.co/d68QTRJ/Realistic-human-heart.jpg" alt="" className='w-8 h-8 rounded-full mr-4' />
+                <div className='relative w-20 mr-2'>
+                    <img src={pfp} alt="" className='absolute -z-10 top-0 w-12 h-12 rounded-full mr-4' />
+                    <img src={user?.photoURL} alt="" className=' z-50 w-12 h-12 rounded-full mr-4' />
+
+                </div>
                 <button onClick={() => setVisible(true)} className='border rounded-3xl w-full opacity-50 text-start pl-4 py-1 hover:bg-slate-100'>what's on your mind?</button>
 
                 <Modal
@@ -58,8 +65,11 @@ export default function PostForm() {
                     <Modal.Body>
                         <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
                             <div className='flex'>
-                                <img src="https://i.ibb.co/d68QTRJ/Realistic-human-heart.jpg" alt="" className='w-8 h-8 rounded-full mr-4' />
-                                <h3 className=' font-bold'>Abdullah</h3>
+                                <div className='relative w-20 mr-2'>
+                                    <img src={pfp} alt="" className='absolute -z-10 top-0 w-12 h-12 rounded-full mr-4' />
+                                    <img src={user?.photoURL} alt="" className=' z-50 w-12 h-12 rounded-full mr-4' />
+                                </div>
+                                <h3 className=' font-bold'>{user?.displayName}</h3>
                             </div>
 
                             <form onSubmit={handleSubmit(onSubmit)}>

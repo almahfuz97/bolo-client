@@ -15,7 +15,7 @@ export default function Comments() {
     const [toast, setToast] = useState(false);
 
     useEffect(() => {
-        fetch(`http://localhost:5000/comments?postId=${post._id}`)
+        fetch(`https://bolo-server.vercel.app/comments?postId=${post._id}`)
             .then(res => res.json())
             .then(data => {
                 setAllComments(data);
@@ -33,7 +33,7 @@ export default function Comments() {
             photoURL: user.photoURL,
             comment,
         }
-        fetch('http://localhost:5000/comments', {
+        fetch('https://bolo-server.vercel.app/comments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export default function Comments() {
                         setToast(false)
                     }, 1000);
                     setComment('');
-                    fetch(`http://localhost:5000/comments?postId=${post._id}`)
+                    fetch(`https://bolo-server.vercel.app/comments?postId=${post._id}`)
                         .then(res => res.json())
                         .then(data => {
                             setAllComments(data);

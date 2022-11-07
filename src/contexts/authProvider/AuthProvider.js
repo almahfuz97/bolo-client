@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import app from '../../firebase/firebase.config';
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateCurrentUser, updateProfile } from 'firebase/auth'
 
 // auth context
 export const AuthContext = createContext();
@@ -18,8 +18,14 @@ export default function AuthProvider({ children }) {
     const loginWithEmail = (email, pass) => {
         return signInWithEmailAndPassword(auth, email, pass);
     }
+
+    // 
+    const updateUser = (info) => {
+        return updateProfile(auth.currentUser, info);
+    }
     // log out
     const logOut = () => {
+        localStorage.removeItem('bolo-token');
         return signOut(auth);
     }
     // sign in with google
@@ -40,7 +46,7 @@ export default function AuthProvider({ children }) {
         return () => unsubscribe();
     }, [])
 
-    const authInfo = { user, loading, createUser, loginWithEmail, logOut, providerSignIn };
+    const authInfo = { user, loading, createUser, loginWithEmail, logOut, providerSignIn, updateUser };
 
     return (
         <AuthContext.Provider value={authInfo}>

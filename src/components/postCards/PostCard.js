@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Modal } from 'flowbite-react';
 import { io } from 'socket.io-client';
 
-const socket = io.connect('http://localhost:5000');
+// const socket = io.connect('https://bolo-server.vercel.app');
 
 export default function PostCard({ post }) {
 
@@ -15,6 +15,7 @@ export default function PostCard({ post }) {
     const { user, loading } = useContext(AuthContext);
     const [likeToggle, setLikeToggle] = useState(false);
     const [totalLikes, setTotalLikes] = useState(likes)
+    const [intLikes, setIntLikes] = useState(likes)
     const [visible, setVisible] = useState(false);
 
     const navigate = useNavigate();
@@ -30,12 +31,13 @@ export default function PostCard({ post }) {
         } else {
 
             console.log(likeToggle)
-            socket.emit('like', { id: _id });
+            // socket.emit('like', { id: _id });
 
             setLikeToggle(!likeToggle);
             console.log(likeToggle)
+            !likeToggle ? setTotalLikes(prev => prev + 1) : setTotalLikes(prev => prev - 1);
 
-            fetch('http://localhost:5000/likes', {
+            fetch('https://bolo-server.vercel.app/likes', {
                 method: 'PUT',
                 headers: {
                     'content-type': 'application/json'
@@ -50,11 +52,11 @@ export default function PostCard({ post }) {
                 .then(data => {
                     console.log(data);
                     if (data.modifiedCount > 0) {
-                        fetch(`http://localhost:5000/post/${_id}`)
+                        fetch(`https://bolo-server.vercel.app/post/${_id}`)
                             .then(res => res.json())
                             .then(data => {
                                 console.log(data);
-                                setTotalLikes(data.likes);
+                                // setTotalLikes(data.likes);
                             })
                     }
                 })
@@ -79,7 +81,7 @@ export default function PostCard({ post }) {
                 </div>
                 <div className=' space-y-0'>
                     <h3 className='font-bold'>{displayName}</h3>
-                    <small className=' text-xs opacity-50'>Student</small>
+                    <small className=' text-xs opacity-50'>{new Date(createdAt).toString().slice(0, 16)}</small>
                 </div>
             </div>
             <div>
@@ -90,11 +92,11 @@ export default function PostCard({ post }) {
                 <img src={imageUrl} alt="" className='f w-full mt-4' />
             </div>
             <div className=' border-t-2 px-4 py-2 flex items-center space-x-4' >
-                <div onClick={() => handleLike(_id)} className=' flex items-center space-x-2 hover:bg-slate-200 px-4 py-1 cursor-pointer'>
+                <div onClick={() => handleLike(_id)} className=' flex items-center space-x-2 lg:hover:bg-slate-200 px-4 py-1 cursor-pointer'>
                     <FontAwesomeIcon size='lg' className={` cursor-pointer ${likeToggle && ' text-blue-600'} `} icon={faThumbsUp} />
                     <p>{totalLikes}</p>
                 </div>
-                <div onClick={() => handleComment(_id)} className=' flex items-center space-x-2 hover:bg-slate-200 px-2 py-1 cursor-pointer'>
+                <div onClick={() => handleComment(_id)} className=' flex items-center space-x-2 lg:hover:bg-slate-200 px-2 py-1 cursor-pointer'>
                     <FontAwesomeIcon size='lg' icon={faComment} className={`cursor-pointer`} />
                     <p>100</p>
                 </div>

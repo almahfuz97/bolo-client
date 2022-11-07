@@ -32,6 +32,7 @@ export default function Comments() {
             displayName: user.displayName,
             photoURL: user.photoURL,
             comment,
+            time: Date.new(),
         }
         fetch('https://bolo-server.vercel.app/comments', {
             method: 'POST',
